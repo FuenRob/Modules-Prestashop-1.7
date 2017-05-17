@@ -18,10 +18,10 @@ class exportcsvproduct extends Module {
 
         parent::__construct();
 
-        $this->displayName = $this->l('Export Product');
-        $this->description = $this->l('');
+        $this->displayName = $this->l('Exportar CSV de productos');
+        $this->description = $this->l('Descargas un CSV con toda la información de precios de los productos de la tienda');
 
-        $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
+        $this->confirmUninstall = $this->l('¿Estás seguro de que deseas desinstalar el módulo?');
 
         if (!Configuration::get('MYMODULE_NAME'))
           $this->warning = $this->l('No name provided');
@@ -32,7 +32,7 @@ class exportcsvproduct extends Module {
         // Install Tabs
         $parent_tab = new Tab();
         // Need a foreach for the language
-        $parent_tab->name[$this->context->language->id] = $this->l('Export Product');
+        $parent_tab->name[$this->context->language->id] = $this->l('Exportar CSV');
         $parent_tab->class_name = 'AdminExportProduct';
         $parent_tab->id_parent = 9; // Catalogo tab
         $parent_tab->module = $this->name;
