@@ -1,0 +1,1 @@
+<th>{l s='Manufacturer' mod='addcolumnlist'}</th>

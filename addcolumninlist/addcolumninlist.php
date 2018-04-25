@@ -30,34 +30,63 @@ class AddColumnInList extends Module {
           $this->warning = $this->l('No name provided');
     }
 
-    public function install()
-    {
-        if (parent::install() && $this->registerHook('actionAdminProductsListingFieldsModifier'))
-                  return true;
+    public function install() {
+        if (!parent::install()
+            || !$this->registerHook('displayAdminCatalogTwigProductHeader')
+            || !$this->registerHook('displayAdminCatalogTwigProductFilter')
+            || !$this->registerHook('displayAdminCatalogTwigListingProductFields')
+            || !$this->registerHook('actionAdminProductsListingFieldsModifier')
+        ) {
         return false;
+        }
+        
+    return true;
     }
-
-    public function uninstall()
+        
+    public function uninstall() {
+        return parent::uninstall();
+    }
+    
+    public function hookDisplayAdminCatalogTwigProductHeader($params)
     {
-        if (parent::uninstall())
-                  return true;
-        return false;
+    return $this->display(__FILE__,'views/templates/hook/displayAdminCatalogTwigProductHeader.tpl');
     }
-
+    
+    public function hookDisplayAdminCatalogTwigProductFilter($params)
+    {
+        $manufacturers = Manufacturer::getManufacturers();
+        $this->context->smarty->assign([
+            'filter_column_name_manufacturer' => Tools::getValue('filter_column_name_manufacturer', »),
+            'manufacturers' => $manufacturers,
+        ]);
+        return $this->display(__FILE__,'views/templates/hook/displayAdminCatalogTwigProductFilter.tpl');
+    }
+    
+    public function hookDisplayAdminCatalogTwigListingProductFields($params)
+    {
+        $this->context->smarty->assign('product',$params['product']);
+        return $this->display(__FILE__,'views/templates/hook/displayAdminCatalogTwigListingProductFields.tpl');
+    }
+    
     public function hookActionAdminProductsListingFieldsModifier($params)
     {
-
+    
         $params['sql_select']['manufacturer'] = [
-        'table' => 'man',
-        'field' => 'name'
-        ];
-
-        $params['sql_table']['man'] = [
-        'table' => 'manufacturer',
-        'join' => 'LEFT JOIN',
-        'on' => 'p.`id_manufacturer` = m.`id_manufacturer`',
+            'table' => 'm',
+            'field' => 'name',
+            'filtering' => \PrestaShop\PrestaShop\Adapter\Admin\AbstractAdminQueryBuilder::FILTERING_LIKE_BOTH
+            ];
+        
+        $params['sql_table']['m'] = [
+            'table' => 'manufacturer',
+            'join' => 'LEFT JOIN',
+            'on' => 'p.`id_manufacturer` = m.`id_manufacturer`',
         ];
         
+        $manufacturer_filter = Tools::getValue('filter_column_name_manufacturer',false);
+        if ( $manufacturer_filter && $manufacturer_filter !=  ») {
+            $params['sql_where'][] .= " p.id_manufacturer = ".$manufacturer_filter;
+        }
     }
-
+        
 }
