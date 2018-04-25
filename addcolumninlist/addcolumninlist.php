@@ -49,8 +49,7 @@ class AddColumnInList extends Module {
 
         $params['sql_select']['manufacturer'] = [
         'table' => 'man',
-        'field' => 'name',
-        'filtering' => \PrestaShop\PrestaShop\Adapter\Admin\AbstractAdminQueryBuilder::FILTERING_LIKE_BOTH
+        'field' => 'name'
         ];
 
         $params['sql_table']['man'] = [
