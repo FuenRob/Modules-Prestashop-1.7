@@ -17,7 +17,7 @@ class AddColumnInList extends Module {
     public function __construct() {
         $this->name = 'addcolumninlist';
         $this->tab = 'administration';
-        $this->version = '2.0.0';
+        $this->version = '2.0.1';
         $this->author = 'FuenRob';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
@@ -55,9 +55,12 @@ class AddColumnInList extends Module {
     public function hookDisplayAdminCatalogTwigProductFilter($params)
     {
         $manufacturers = Manufacturer::getManufacturers();
+        $suppliers = Supplier::getSuppliers();
         $this->context->smarty->assign([
-            'filter_column_name_manufacturer' => Tools::getValue('filter_column_name_manufacturer', »),
+            'filter_column_name_manufacturer' => Tools::getValue('filter_column_name_manufacturer', ''),
             'manufacturers' => $manufacturers,
+            'filter_column_name_supplier' => Tools::getValue('filter_column_name_supplier', ''),
+            'suppliers' => $suppliers,
         ]);
         return $this->display(__FILE__,'views/templates/hook/displayAdminCatalogTwigProductFilter.tpl');
     }
@@ -70,7 +73,7 @@ class AddColumnInList extends Module {
     
     public function hookActionAdminProductsListingFieldsModifier($params)
     {
-    
+        // Manufacturer
         $params['sql_select']['manufacturer'] = [
             'table' => 'm',
             'field' => 'name',
@@ -84,8 +87,26 @@ class AddColumnInList extends Module {
         ];
         
         $manufacturer_filter = Tools::getValue('filter_column_name_manufacturer',false);
-        if ( $manufacturer_filter && $manufacturer_filter !=  ») {
+        if ($manufacturer_filter && $manufacturer_filter !=  '') {
             $params['sql_where'][] .= " p.id_manufacturer = ".$manufacturer_filter;
+        }
+
+        // Supplier
+        $params['sql_select']['supplier'] = [
+            'table' => 'sup',
+            'field' => 'name',
+            'filtering' => \PrestaShop\PrestaShop\Adapter\Admin\AbstractAdminQueryBuilder::FILTERING_LIKE_BOTH
+            ];
+        
+        $params['sql_table']['sup'] = [
+            'table' => 'supplier',
+            'join' => 'LEFT JOIN',
+            'on' => 'p.`id_supplier` = sup.`id_supplier`',
+        ];
+        
+        $supplier_filter = Tools::getValue('filter_column_name_supplier',false);
+        if ($supplier_filter && $supplier_filter != '') {
+            $params['sql_where'][] .= " p.id_supplier = ".$supplier_filter;
         }
     }
         
