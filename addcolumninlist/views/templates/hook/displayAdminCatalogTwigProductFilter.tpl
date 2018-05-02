@@ -9,3 +9,14 @@
         {/foreach}
     </select>
 </th>
+ <th>
+    <select name="filter_column_name_supplier" data-toggle="select2">
+        <option value="">{l s='Suppliers' mod='addcolumnlist'}</option>
+        {foreach from=$suppliers item=supplier}
+            <option value="{$supplier.id_supplier}" 
+            {if $filter_column_name_supplier == $supplier.id_supplier} selected="selected"{/if}>
+            {$supplier.name}
+            </option>
+        {/foreach}
+    </select>
+</th>
