@@ -25,7 +25,7 @@ class securityformregister extends Module {
     
     public function __construct() {
         $this->name = 'securityformregister';
-        $this->tab = 'export';
+        $this->tab = 'others';
         $this->version = '1.0.0';
         $this->author = 'Roberto Morais';
         $this->need_instance = 0;
